@@ -798,10 +798,10 @@ export default function EaseAnimateUX() {
               transition={{ duration: 1, delay: 1 }}
             >
               {[
-                { number: 50, label: "Projects Completed", suffix: "+" },
-                { number: 100, label: "Happy Clients", suffix: "%" },
+                { number: 15, label: "Projects Completed", suffix: "+" },
+                { number: 50, label: "Happy Clients", suffix: "%" },
                 { number: 24, label: "Support Hours", suffix: "/7" },
-                { number: 3, label: "Years Experience", suffix: "+" },
+                { number: 5, label: "Years Experience", suffix: "+" },
               ].map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-xl sm:text-2xl md:text-3xl font-bold text-transparent bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">
