@@ -1,35 +1,58 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Poppins } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  title: "EaseAnimateUX - Where Innovation Meets Animation",
+  title: "Xelerated Tech - Your Digital Solutions Partner",
   description:
-    "Transform your ideas into stunning, animated web experiences that captivate users and drive business growth.",
+    "Professional web development, digital solutions, and technology consulting services. Transform your business with cutting-edge digital experiences.",
+  keywords: "web development, digital solutions, technology consulting, software development, UI/UX design",
+  authors: [{ name: "Xelerated Tech" }],
+  metadataBase: new URL('https://xeleratedtech.com'),
+  creator: "Xelerated Tech",
+  publisher: "Xelerated Tech",
   icons: {
-    icon: "/images/favicon.ico",            // standard favicon
-    shortcut: "/images/favicon.ico",        // <link rel="shortcut icon">
-    apple: "/images/apple-touch-icon.png",  // if you have an apple-touch-icon
-    // You can also specify others, e.g.:
-    // other: [
-    //   { rel: "icon", url: "/favicon-32x32.png", sizes: "32x32" },
-    //   { rel: "icon", url: "/favicon-16x16.png", sizes: "16x16" },
-    // ],
+    icon: "/images/xelerated-logo-light.jpg",
+    shortcut: "/images/xelerated-logo-light.jpg",
+    apple: "/images/xelerated-logo-light.jpg",
   },
-};
+  openGraph: {
+    title: "Xelerated Tech - Your Digital Solutions Partner",
+    description: "Professional web development, digital solutions, and technology consulting services.",
+    url: "https://xeleratedtech.com",
+    siteName: "Xelerated Tech",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Xelerated Tech - Your Digital Solutions Partner",
+    description: "Professional web development, digital solutions, and technology consulting services.",
+  },
+}
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${poppins.variable}`}>
+      <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
