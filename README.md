@@ -2,7 +2,7 @@
 
 **EaseAnimateUX** is a Next.js-based front-end template/boilerplate and design system for building seamless, animated user experiences. It provides a modern, responsive foundation with built-in theme (light/dark), animated logo support, micro-interactions, and utility components to help you launch animated, user-friendly websites quickly.
 
-> **Demo / Live Site**: https://easeanimateux.vercel.app 
+> **Demo / Live Site**: https://xeleratedtech.vercel.app 
 > **Logo**: The “EamoUX” monogram with flowing motion icon, adaptive to light/dark mode.
 
 ---
