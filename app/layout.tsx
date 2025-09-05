@@ -27,6 +27,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://xeleratedtech.com'),
   creator: "Xelerated Tech",
   publisher: "Xelerated Tech",
+  verification: {
+    google: 'h2-ENtgUsjrxHbZVDWebG2mOhih3HUN4KDXsmGb7G6Q'
+  },
   icons: {
     icon: [
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },

@@ -35,6 +35,12 @@ import { FloatingElements } from "@/components/floating-elements"
 import { AnimatedCounter } from "@/components/animated-counter"
 import { submitContactForm } from "@/lib/actions"
 
+declare global {
+  interface Window {
+    grecaptcha: any;
+  }
+}
+
 // Services data for Xelerated Tech
 const services = [
   {
@@ -296,6 +302,17 @@ export default function HomePage() {
 
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = `https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`
+    document.head.appendChild(script)
+    return () => {
+      if (script.parentNode) {
+        script.parentNode.removeChild(script)
+      }
+    }
   }, [])
 
   const scrollToSection = (sectionId: string) => {
