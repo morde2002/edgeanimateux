@@ -29,6 +29,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { BackToTopButton } from "@/components/back-to-top"
 import { FloatingElements } from "@/components/floating-elements"
@@ -95,7 +102,7 @@ const portfolioItems = [
     image: "/images/hisia-youth.png",
     category: "Non-Profit Website",
     technologies: ["Next.js", "React", "Tailwind CSS", "CMS"],
-    url: "https://hisiayouth.org",
+    url: "https://morde2002.github.io/hisiayouth.github.io/",
     gradient: "from-green-500 to-green-600",
   },
   {
@@ -106,15 +113,6 @@ const portfolioItems = [
     technologies: ["React", "Node.js", "MongoDB", "Responsive Design"],
     url: "https://barakaminingltd.co.ke",
     gradient: "from-blue-500 to-blue-600",
-  },
-  {
-    title: "Harun Floor Trading Platform",
-    description: "Comprehensive Forex trading education platform providing complete trading courses and mentorship programs for aspiring traders.",
-    image: "/images/harun-floor.png",
-    category: "Educational Platform",
-    technologies: ["Vue.js", "Express.js", "MySQL", "Payment Integration"],
-    url: "https://harunfloor.com",
-    gradient: "from-purple-500 to-purple-600",
   },
   {
     title: "Airbnb Clone Application",
@@ -182,15 +180,6 @@ const testimonials = [
     gradient: "from-emerald-500 to-emerald-600",
   },
   {
-    name: "Harun ",
-    role: "Founder",
-    company: "Harun Floor Trading",
-    content:
-      "Xelerated Tech transformed our Forex education business with an outstanding platform. The course delivery system and mentorship features they built have helped us reach hundreds of aspiring traders across Kenya.",
-    rating: 5,
-    gradient: "from-purple-500 to-purple-600",
-  },
-  {
     name: "Kevin Mwangi",
     role: "Project Manager",
     company: "Jenwa Construction Ltd",
@@ -218,6 +207,41 @@ const testimonials = [
     gradient: "from-indigo-500 to-indigo-600",
   },
 ]
+
+// Pricing add-ons data
+const pricingAddOns = {
+  pages: { name: "Additional Pages", basePrice: 2000, unit: "per page" },
+  seo: { name: "SEO Optimization", price: 4000 },
+  whatsapp: { name: "WhatsApp Integration", price: 1500 },
+  contactForm: { name: "Contact Form with Email", price: 2000 },
+  analytics: { name: "Google Analytics", price: 1500 },
+  socialMedia: { name: "Social Media Integration", price: 1000 },
+  blogSection: { name: "Blog/News Section", price: 5000 },
+  darkMode: { name: "Dark Mode Toggle", price: 1500 },
+  animations: { name: "Custom Animations", price: 2500 },
+  testimonials: { name: "Testimonials Section", price: 1500 },
+  gallery: { name: "Image Gallery", price: 2000 },
+  newsletter: { name: "Newsletter Signup", price: 2500 },
+  domains: {
+    coKe: { name: ".co.ke Domain (1 year)", price: 1000 },
+    com: { name: ".com Domain (1 year)", price: 1500 },
+    org: { name: ".org Domain (1 year)", price: 1500 },
+    net: { name: ".net Domain (1 year)", price: 1500 },
+  },
+  support: {
+    threeMonth: { name: "3 Months Support", price: 5000 },
+    sixMonth: { name: "6 Months Support", price: 9000 },
+    oneYear: { name: "1 Year Support", price: 15000 },
+  },
+  advanced: {
+    payment: { name: "Payment Integration (M-Pesa/Card)", price: 10000 },
+    auth: { name: "User Authentication System", price: 8000 },
+    database: { name: "Database Integration", price: 6000 },
+    admin: { name: "Admin Dashboard", price: 12000 },
+    booking: { name: "Booking/Reservation System", price: 15000 },
+    ecommerce: { name: "E-commerce Features", price: 20000 },
+  },
+}
 
 // FAQ data
 const faqs = [
@@ -267,6 +291,23 @@ export default function HomePage() {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
   const [submitMessage, setSubmitMessage] = useState("")
 
+  // Pricing calculator state
+  const [selectedAddOns, setSelectedAddOns] = useState<Record<string, boolean>>({})
+  const [additionalPagesCount, setAdditionalPagesCount] = useState(0)
+  const [selectedDomain, setSelectedDomain] = useState("")
+  const [selectedSupport, setSelectedSupport] = useState("")
+  const [showAdvanced, setShowAdvanced] = useState(false)
+  const [budgetSlider, setBudgetSlider] = useState(5000)
+
+  // Email modal state
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+  const [emailModalPackage, setEmailModalPackage] = useState("")
+  const [emailModalDetails, setEmailModalDetails] = useState("")
+  const [modalFormData, setModalFormData] = useState({ name: "", email: "", notes: "" })
+  const [isModalSubmitting, setIsModalSubmitting] = useState(false)
+  const [modalSubmitStatus, setModalSubmitStatus] = useState<"idle" | "success" | "error">("idle")
+  const [modalSubmitMessage, setModalSubmitMessage] = useState("")
+
   const { scrollYProgress } = useScroll()
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
   const mouseX = useMotionValue(0)
@@ -285,7 +326,7 @@ export default function HomePage() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["home", "about", "services", "portfolio", "testimonials", "contact"]
+      const sections = ["home", "about", "services", "pricing", "portfolio", "testimonials", "contact"]
       const scrollPosition = window.scrollY + 100
 
       for (const section of sections) {
@@ -373,11 +414,446 @@ export default function HomePage() {
     }
   }
 
+  // Calculate total price for custom package
+  const calculateTotalPrice = () => {
+    let total = 5000 // Base price
+
+    // Add additional pages
+    if (additionalPagesCount > 0) {
+      total += additionalPagesCount * 2000
+    }
+
+    // Add selected add-ons
+    if (selectedAddOns.seo) total += 4000
+    if (selectedAddOns.whatsapp) total += 1500
+    if (selectedAddOns.contactForm) total += 2000
+    if (selectedAddOns.analytics) total += 1500
+    if (selectedAddOns.socialMedia) total += 1000
+    if (selectedAddOns.blogSection) total += 5000
+    if (selectedAddOns.darkMode) total += 1500
+    if (selectedAddOns.animations) total += 2500
+    if (selectedAddOns.testimonials) total += 1500
+    if (selectedAddOns.gallery) total += 2000
+    if (selectedAddOns.newsletter) total += 2500
+
+    // Add domain
+    if (selectedDomain === "coKe") total += 1000
+    if (selectedDomain === "com") total += 1500
+    if (selectedDomain === "org") total += 1500
+    if (selectedDomain === "net") total += 1500
+
+    // Add support
+    if (selectedSupport === "threeMonth") total += 5000
+    if (selectedSupport === "sixMonth") total += 9000
+    if (selectedSupport === "oneYear") total += 15000
+
+    // Add advanced features
+    if (selectedAddOns.payment) total += 10000
+    if (selectedAddOns.auth) total += 8000
+    if (selectedAddOns.database) total += 6000
+    if (selectedAddOns.admin) total += 12000
+    if (selectedAddOns.booking) total += 15000
+    if (selectedAddOns.ecommerce) total += 20000
+
+    return total
+  }
+
+  const toggleAddOn = (key: string) => {
+    setSelectedAddOns((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
+
+  // Generate formatted email details for calculator
+  const getCalculatorEmailDetails = () => {
+    const total = calculateTotalPrice()
+    let details = "CUSTOM PACKAGE BREAKDOWN:\n\n"
+    details += "• Base Package (Landing Page) - KES 5,000\n"
+
+    // Add pages
+    if (additionalPagesCount > 0) {
+      details += `• ${additionalPagesCount} Additional Page${additionalPagesCount > 1 ? 's' : ''} - KES ${(additionalPagesCount * 2000).toLocaleString()}\n`
+    }
+
+    // Add selected features
+    if (selectedAddOns.seo) details += "• SEO Optimization - KES 4,000\n"
+    if (selectedAddOns.whatsapp) details += "• WhatsApp Integration - KES 1,500\n"
+    if (selectedAddOns.contactForm) details += "• Contact Form + Email - KES 2,000\n"
+    if (selectedAddOns.analytics) details += "• Google Analytics - KES 1,500\n"
+    if (selectedAddOns.socialMedia) details += "• Social Media Integration - KES 1,000\n"
+    if (selectedAddOns.blogSection) details += "• Blog/News Section - KES 5,000\n"
+    if (selectedAddOns.darkMode) details += "• Dark Mode Toggle - KES 1,500\n"
+    if (selectedAddOns.animations) details += "• Custom Animations - KES 2,500\n"
+    if (selectedAddOns.testimonials) details += "• Testimonials Section - KES 1,500\n"
+    if (selectedAddOns.gallery) details += "• Image Gallery - KES 2,000\n"
+    if (selectedAddOns.newsletter) details += "• Newsletter Signup - KES 2,500\n"
+
+    // Add domain
+    if (selectedDomain) {
+      const domainName = selectedDomain === "coKe" ? ".co.ke" : selectedDomain === "com" ? ".com" : selectedDomain === "org" ? ".org" : ".net"
+      const domainPrice = selectedDomain === "coKe" ? "1,000" : "1,500"
+      details += `• Custom Domain (${domainName}) - KES ${domainPrice}\n`
+    }
+
+    // Add advanced features
+    if (selectedAddOns.payment) details += "• Payment Integration (M-Pesa/Card) - KES 10,000\n"
+    if (selectedAddOns.auth) details += "• User Authentication - KES 8,000\n"
+    if (selectedAddOns.database) details += "• Database Integration - KES 6,000\n"
+    if (selectedAddOns.admin) details += "• Admin Dashboard - KES 12,000\n"
+    if (selectedAddOns.booking) details += "• Booking System - KES 15,000\n"
+    if (selectedAddOns.ecommerce) details += "• E-commerce Features - KES 20,000\n"
+
+    details += `\nTOTAL PACKAGE PRICE: KES ${total.toLocaleString()}`
+
+    return details
+  }
+
+  // Generate formatted WhatsApp message for calculator
+  const getCalculatorWhatsAppMessage = () => {
+    const total = calculateTotalPrice()
+    let message = "Hi Xelerated Tech! 👋\n\n"
+    message += "I've customized a package on your website:\n\n"
+    message += "📦 *CUSTOM PACKAGE*\n"
+    message += "━━━━━━━━━━━━━━━━\n"
+    message += "• Base Package (Landing Page) - KES 5,000\n"
+
+    // Add pages
+    if (additionalPagesCount > 0) {
+      message += `• ${additionalPagesCount} Additional Page${additionalPagesCount > 1 ? 's' : ''} - KES ${(additionalPagesCount * 2000).toLocaleString()}\n`
+    }
+
+    // Add selected features
+    if (selectedAddOns.seo) message += "• SEO Optimization - KES 4,000\n"
+    if (selectedAddOns.whatsapp) message += "• WhatsApp Integration - KES 1,500\n"
+    if (selectedAddOns.contactForm) message += "• Contact Form + Email - KES 2,000\n"
+    if (selectedAddOns.analytics) message += "• Google Analytics - KES 1,500\n"
+    if (selectedAddOns.socialMedia) message += "• Social Media Integration - KES 1,000\n"
+    if (selectedAddOns.blogSection) message += "• Blog/News Section - KES 5,000\n"
+    if (selectedAddOns.darkMode) message += "• Dark Mode Toggle - KES 1,500\n"
+    if (selectedAddOns.animations) message += "• Custom Animations - KES 2,500\n"
+    if (selectedAddOns.testimonials) message += "• Testimonials Section - KES 1,500\n"
+    if (selectedAddOns.gallery) message += "• Image Gallery - KES 2,000\n"
+    if (selectedAddOns.newsletter) message += "• Newsletter Signup - KES 2,500\n"
+
+    // Add domain
+    if (selectedDomain) {
+      const domainName = selectedDomain === "coKe" ? ".co.ke" : selectedDomain === "com" ? ".com" : selectedDomain === "org" ? ".org" : ".net"
+      const domainPrice = selectedDomain === "coKe" ? "1,000" : "1,500"
+      message += `• Custom Domain (${domainName}) - KES ${domainPrice}\n`
+    }
+
+    // Add advanced features
+    if (selectedAddOns.payment) message += "• Payment Integration (M-Pesa/Card) - KES 10,000\n"
+    if (selectedAddOns.auth) message += "• User Authentication - KES 8,000\n"
+    if (selectedAddOns.database) message += "• Database Integration - KES 6,000\n"
+    if (selectedAddOns.admin) message += "• Admin Dashboard - KES 12,000\n"
+    if (selectedAddOns.booking) message += "• Booking System - KES 15,000\n"
+    if (selectedAddOns.ecommerce) message += "• E-commerce Features - KES 20,000\n"
+
+    message += "━━━━━━━━━━━━━━━━\n"
+    message += `💰 *TOTAL: KES ${total.toLocaleString()}*\n\n`
+    message += "Let's discuss this project! When can we talk?"
+
+    return encodeURIComponent(message)
+  }
+
+  // Open email modal with package details
+  const openEmailModal = (packageName: string, packageDetails: string) => {
+    setEmailModalPackage(packageName)
+    setEmailModalDetails(packageDetails)
+    setIsEmailModalOpen(true)
+    setModalSubmitStatus("idle")
+    setModalFormData({ name: "", email: "", notes: "" })
+  }
+
+  // Handle modal form submission
+  const handleModalSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!modalFormData.name.trim() || !modalFormData.email.trim()) {
+      setModalSubmitStatus("error")
+      setModalSubmitMessage("Please fill in your name and email")
+      return
+    }
+
+    if (!/\S+@\S+\.\S+/.test(modalFormData.email)) {
+      setModalSubmitStatus("error")
+      setModalSubmitMessage("Please enter a valid email address")
+      return
+    }
+
+    setIsModalSubmitting(true)
+    setModalSubmitStatus("idle")
+
+    try {
+      const result = await submitContactForm({
+        name: modalFormData.name,
+        email: modalFormData.email,
+        subject: `Quote Request - ${emailModalPackage}`,
+        message: `${emailModalDetails}\n\n${modalFormData.notes ? `Additional Notes:\n${modalFormData.notes}` : ""}`
+      })
+
+      if (result.success) {
+        setModalSubmitStatus("success")
+        setModalSubmitMessage("Quote request sent! We'll reply within 24 hours.")
+        setTimeout(() => {
+          setIsEmailModalOpen(false)
+        }, 2000)
+      } else {
+        setModalSubmitStatus("error")
+        setModalSubmitMessage(result.error || "Something went wrong. Please try again.")
+      }
+    } catch (error) {
+      setModalSubmitStatus("error")
+      setModalSubmitMessage("Something went wrong. Please try again.")
+    } finally {
+      setIsModalSubmitting(false)
+    }
+  }
+
+  // Auto-select features based on budget slider
+  useEffect(() => {
+    const budget = budgetSlider
+    const newAddOns: Record<string, boolean> = {}
+    let newPages = 0
+    let newDomain = ""
+
+    // Base package is always included at 5000
+    if (budget <= 5000) {
+      setSelectedAddOns({})
+      setAdditionalPagesCount(0)
+      setSelectedDomain("")
+      return
+    }
+
+    let remaining = budget - 5000
+
+    // Priority order for features (most valuable first)
+    // 8K-12K range: Add basic features
+    if (remaining >= 2000 && remaining < 7000) {
+      newPages = Math.min(Math.floor(remaining / 2000), 2)
+      remaining -= newPages * 2000
+
+      if (remaining >= 1500) {
+        newAddOns.whatsapp = true
+        remaining -= 1500
+      }
+    }
+
+    // 12K-20K range: Add more features
+    else if (remaining >= 7000 && remaining < 15000) {
+      newPages = 2
+      remaining -= 4000
+      newAddOns.whatsapp = true
+      remaining -= 1500
+      newAddOns.contactForm = true
+      remaining -= 2000
+
+      if (remaining >= 4000) {
+        newAddOns.seo = true
+        remaining -= 4000
+      } else if (remaining >= 1500) {
+        newAddOns.analytics = true
+        remaining -= 1500
+      }
+    }
+
+    // 20K-35K range: Professional package
+    else if (remaining >= 15000 && remaining < 30000) {
+      newPages = 3
+      remaining -= 6000
+      newAddOns.whatsapp = true
+      remaining -= 1500
+      newAddOns.contactForm = true
+      remaining -= 2000
+      newAddOns.seo = true
+      remaining -= 4000
+      newAddOns.analytics = true
+      remaining -= 1500
+
+      if (remaining >= 1000) {
+        newDomain = "coKe"
+        remaining -= 1000
+      }
+
+      if (remaining >= 1000) {
+        newAddOns.socialMedia = true
+        remaining -= 1000
+      }
+    }
+
+    // 35K-50K range: Advanced features
+    else if (remaining >= 30000 && remaining < 45000) {
+      newPages = 5
+      remaining -= 10000
+      newAddOns.whatsapp = true
+      newAddOns.contactForm = true
+      newAddOns.seo = true
+      newAddOns.analytics = true
+      newAddOns.socialMedia = true
+      newAddOns.blogSection = true
+      remaining -= 5000 + 1500 + 2000 + 4000 + 1500 + 1000
+
+      newDomain = "com"
+      remaining -= 1500
+
+      if (remaining >= 2500) {
+        newAddOns.animations = true
+        remaining -= 2500
+      }
+    }
+
+    // 50K+ range: Full package with advanced features
+    else if (remaining >= 45000) {
+      newPages = 5
+      newAddOns.whatsapp = true
+      newAddOns.contactForm = true
+      newAddOns.seo = true
+      newAddOns.analytics = true
+      newAddOns.socialMedia = true
+      newAddOns.blogSection = true
+      newAddOns.animations = true
+      newAddOns.testimonials = true
+      newAddOns.gallery = true
+      newDomain = "com"
+      remaining -= (10000 + 1500 + 2000 + 4000 + 1500 + 1000 + 5000 + 2500 + 1500 + 2000 + 1500)
+
+      // Add advanced features if budget allows
+      if (remaining >= 6000) {
+        newAddOns.database = true
+        remaining -= 6000
+      }
+      if (remaining >= 8000) {
+        newAddOns.auth = true
+        remaining -= 8000
+      }
+      if (remaining >= 10000) {
+        newAddOns.payment = true
+        remaining -= 10000
+      }
+      if (remaining >= 12000) {
+        newAddOns.admin = true
+      }
+    }
+
+    setSelectedAddOns(newAddOns)
+    setAdditionalPagesCount(newPages)
+    setSelectedDomain(newDomain)
+  }, [budgetSlider])
+
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden transition-colors duration-300">
 
       {/* Back to Top Button */}
       <BackToTopButton />
+
+      {/* Email Quote Modal */}
+      <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-2xl">
+              <Mail className="h-6 w-6 text-orange-500" />
+              Email Quote Request
+            </DialogTitle>
+            <DialogDescription>
+              We&apos;ll send you a detailed quote within 24 hours
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4">
+            {/* Package Details */}
+            <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 p-4 rounded-lg mb-6 border-2 border-orange-200 dark:border-orange-800">
+              <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                <Check className="h-5 w-5 text-orange-500" />
+                You Selected:
+              </h4>
+              <p className="text-sm font-medium text-orange-700 dark:text-orange-300">{emailModalPackage}</p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleModalSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Your Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={modalFormData.name}
+                  onChange={(e) => setModalFormData(prev => ({ ...prev, name: e.target.value }))}
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Your Email <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={modalFormData.email}
+                  onChange={(e) => setModalFormData(prev => ({ ...prev, email: e.target.value }))}
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  placeholder="john@example.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Additional Notes (Optional)
+                </label>
+                <textarea
+                  value={modalFormData.notes}
+                  onChange={(e) => setModalFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors resize-none border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  rows={3}
+                  placeholder="Tell us more about your project timeline, specific requirements, etc."
+                />
+              </div>
+
+              {modalSubmitStatus === "success" && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg flex items-center gap-2"
+                >
+                  <Check className="h-5 w-5" />
+                  {modalSubmitMessage}
+                </motion.div>
+              )}
+
+              {modalSubmitStatus === "error" && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg"
+                >
+                  {modalSubmitMessage}
+                </motion.div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsEmailModalOpen(false)}
+                  className="flex-1"
+                  disabled={isModalSubmitting}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isModalSubmitting}
+                  className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white cursor-pointer"
+                >
+                  {isModalSubmitting ? "Sending..." : "Send Quote Request"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Navigation */}
       <motion.nav
@@ -409,7 +885,7 @@ export default function HomePage() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {["home", "about", "services", "portfolio", "testimonials", "contact"].map((item) => (
+            {["home", "about", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
               <motion.button
                 key={item}
                 onClick={() => scrollToSection(item)}
@@ -451,7 +927,7 @@ export default function HomePage() {
               className="lg:hidden bg-background/95 backdrop-blur-md border-t border-border"
             >
               <div className="container mx-auto px-4 py-4 space-y-3">
-                {["home", "about", "services", "portfolio", "testimonials", "contact"].map((item) => (
+                {["home", "about", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
                   <motion.button
                     key={item}
                     onClick={() => scrollToSection(item)}
@@ -712,6 +1188,495 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" className="py-20 relative">
+        <div className="container mx-auto px-4">
+          {/* Base Pricing Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-4 py-2 text-sm font-medium mb-6">
+              Transparent Pricing
+            </Badge>
+            <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 font-heading">
+              Affordable Solutions for{" "}
+              <span className="text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                Every Business
+              </span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-4">
+              Flexible packages designed for Kenyan businesses, from startups to enterprises
+            </p>
+          </motion.div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+            {/* Starter Package */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="bg-card border-2 border-green-300 dark:border-green-600 relative h-full">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white">Most Popular</Badge>
+                </div>
+                <CardHeader className="text-center pt-8">
+                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Landing Page</h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                      KES 8K - 15K
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Perfect for startups & personal brands</p>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  <ul className="space-y-2 mb-6">
+                    {["Single page design", "Mobile responsive", "Contact form", "Social media links"].map((item, i) => (
+                      <li key={i} className="flex items-center text-sm">
+                        <Check className="h-4 w-4 text-green-500 mr-2 flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in the *Landing Page Package (KES 8-15K)*.\n\nCan we discuss my project requirements?")}`, "_blank")}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                    </svg>
+                    WhatsApp Us
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground mt-2">
+                    Prefer email? <button onClick={() => openEmailModal("Landing Page Package (KES 8-15K)", "Package: Landing Page\n• Single page design\n• Mobile responsive\n• Contact form\n• Social media links")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Business Package */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="bg-card border-2 border-blue-300 dark:border-blue-600 relative h-full">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">Best Value</Badge>
+                </div>
+                <CardHeader className="text-center pt-8">
+                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Small Business</h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                      KES 25K - 50K
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Ideal for growing businesses</p>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  <ul className="space-y-2 mb-6">
+                    {["Up to 5-7 pages", "Custom design", "SEO optimization", "Email integration"].map((item, i) => (
+                      <li key={i} className="flex items-center text-sm">
+                        <Check className="h-4 w-4 text-blue-500 mr-2 flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in the *Small Business Package (KES 25-50K)*.\n\nCan we discuss my project requirements?")}`, "_blank")}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                    </svg>
+                    WhatsApp Us
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground mt-2">
+                    Prefer email? <button onClick={() => openEmailModal("Small Business Package (KES 25-50K)", "Package: Small Business Website\n• Up to 5-7 pages\n• Custom responsive design\n• SEO optimization\n• Email integration\n• Social media integration\n• Google Analytics setup")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Custom Package */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5 }}
+            >
+              <Card className="bg-card border-2 border-purple-300 dark:border-purple-600 relative h-full">
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">Enterprise</Badge>
+                </div>
+                <CardHeader className="text-center pt-8">
+                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Custom Solutions</h3>
+                  <div className="mb-4">
+                    <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                      Let&apos;s Talk
+                    </span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Tailored for your unique needs</p>
+                </CardHeader>
+                <CardContent className="pt-2">
+                  <ul className="space-y-2 mb-6">
+                    {["E-commerce platforms", "Web applications", "Payment integration", "Ongoing support"].map((item, i) => (
+                      <li key={i} className="flex items-center text-sm">
+                        <Check className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in *Custom Solutions* for my project.\n\nI need help with complex features like e-commerce, web applications, or payment integration.\n\nCan we schedule a consultation?")}`, "_blank")}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                    </svg>
+                    WhatsApp Us
+                  </Button>
+                  <p className="text-xs text-center text-muted-foreground mt-2">
+                    Prefer email? <button onClick={() => openEmailModal("Custom Solutions Package", "Package: Custom Solutions\n• E-commerce platforms\n• Web applications\n• Payment integration (M-Pesa/Card)\n• User authentication\n• Database integration\n• Ongoing support & maintenance\n\nLet's discuss your specific requirements and build a custom solution tailored to your business needs.")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Divider */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center my-12"
+          >
+            <p className="text-lg text-muted-foreground mb-2">Or build your custom package below</p>
+            <ChevronDown className="h-6 w-6 mx-auto text-orange-500 animate-bounce" />
+          </motion.div>
+
+          {/* Interactive Calculator */}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="max-w-6xl mx-auto"
+          >
+            <Card className="bg-card border-border shadow-xl">
+              <CardHeader className="text-center pb-6">
+                <h3 className="text-3xl font-bold text-foreground mb-2 font-heading">
+                  Build Your Package
+                </h3>
+                <p className="text-muted-foreground">Customize your website to fit your budget and needs</p>
+              </CardHeader>
+              <CardContent className="px-6 pb-8">
+                {/* Budget Slider */}
+                <div className="mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <label className="text-sm font-medium text-foreground">Drag to explore packages:</label>
+                    <span className="text-2xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                      KES {calculateTotalPrice().toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type="range"
+                      min="5000"
+                      max="100000"
+                      step="1000"
+                      value={budgetSlider}
+                      onChange={(e) => setBudgetSlider(Number(e.target.value))}
+                      className="w-full h-3 rounded-lg appearance-none cursor-pointer accent-orange-500"
+                      style={{
+                        background: `linear-gradient(to right, rgb(249, 115, 22) 0%, rgb(249, 115, 22) ${((budgetSlider - 5000) / 95000) * 100}%, rgb(229, 231, 235) ${((budgetSlider - 5000) / 95000) * 100}%, rgb(229, 231, 235) 100%)`
+                      }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground mt-2">
+                    <span>5K</span>
+                    <span>25K</span>
+                    <span>50K</span>
+                    <span>75K</span>
+                    <span>100K</span>
+                  </div>
+                  <p className="text-xs text-center text-muted-foreground mt-3">
+                    💡 Tip: Slide to auto-select features, or manually customize below
+                  </p>
+                </div>
+
+                {/* Two Column Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Left Column - Add-ons */}
+                  <div className="lg:col-span-2 space-y-6">
+                    {/* Base Package */}
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3 flex items-center">
+                        <Badge className="bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 mr-2">
+                          BASE
+                        </Badge>
+                        Always Included (KES 5,000)
+                      </h4>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                          <Check className="h-4 w-4 text-orange-500 mr-2" />
+                          Landing page design
+                        </div>
+                        <div className="flex items-center">
+                          <Check className="h-4 w-4 text-orange-500 mr-2" />
+                          Mobile responsive
+                        </div>
+                        <div className="flex items-center">
+                          <Check className="h-4 w-4 text-orange-500 mr-2" />
+                          Vercel hosting setup
+                        </div>
+                        <div className="flex items-center">
+                          <Check className="h-4 w-4 text-orange-500 mr-2" />
+                          Basic styling
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Quick Add-ons */}
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3">Quick Add-ons</h4>
+                      <div className="space-y-2">
+                        {/* Additional Pages */}
+                        <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                          <label className="flex items-center cursor-pointer flex-1">
+                            <input
+                              type="checkbox"
+                              checked={additionalPagesCount > 0}
+                              onChange={(e) => setAdditionalPagesCount(e.target.checked ? 1 : 0)}
+                              className="mr-3 w-4 h-4 accent-orange-500 cursor-pointer"
+                            />
+                            <span className="text-sm">Additional Pages</span>
+                          </label>
+                          {additionalPagesCount > 0 && (
+                            <input
+                              type="number"
+                              min="1"
+                              max="10"
+                              value={additionalPagesCount}
+                              onChange={(e) => setAdditionalPagesCount(Number(e.target.value))}
+                              className="w-16 px-2 py-1 text-sm border rounded ml-2 bg-background"
+                            />
+                          )}
+                          <span className="text-sm font-medium ml-3">+{(additionalPagesCount * 2000).toLocaleString()}</span>
+                        </div>
+
+                        {[
+                          { key: "seo", label: "SEO Optimization", price: 4000 },
+                          { key: "whatsapp", label: "WhatsApp Integration", price: 1500 },
+                          { key: "contactForm", label: "Contact Form + Email", price: 2000 },
+                          { key: "analytics", label: "Google Analytics", price: 1500 },
+                          { key: "blogSection", label: "Blog/News Section", price: 5000 },
+                        ].map((addon) => (
+                          <div key={addon.key} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                            <label className="flex items-center cursor-pointer flex-1">
+                              <input
+                                type="checkbox"
+                                checked={selectedAddOns[addon.key] || false}
+                                onChange={() => toggleAddOn(addon.key)}
+                                className="mr-3 w-4 h-4 accent-orange-500 cursor-pointer"
+                              />
+                              <span className="text-sm">{addon.label}</span>
+                            </label>
+                            <span className="text-sm font-medium">+{addon.price.toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Domain Selection */}
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-3">Custom Domain (Optional)</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { key: "coKe", label: ".co.ke", price: 1000 },
+                          { key: "com", label: ".com", price: 1500 },
+                          { key: "org", label: ".org", price: 1500 },
+                          { key: "net", label: ".net", price: 1500 },
+                        ].map((domain) => (
+                          <label
+                            key={domain.key}
+                            className={`flex items-center justify-between p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                              selectedDomain === domain.key
+                                ? "border-orange-500 bg-orange-50 dark:bg-orange-950"
+                                : "border-border hover:border-orange-300"
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="domain"
+                              checked={selectedDomain === domain.key}
+                              onChange={() => setSelectedDomain(selectedDomain === domain.key ? "" : domain.key)}
+                              className="mr-2 accent-orange-500 cursor-pointer"
+                            />
+                            <span className="text-sm flex-1">{domain.label}</span>
+                            <span className="text-xs font-medium">+{domain.price.toLocaleString()}</span>
+                          </label>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">* Annual registration fee</p>
+                    </div>
+
+                    {/* Advanced Features */}
+                    <div>
+                      <button
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                        className="flex items-center text-sm font-semibold text-orange-500 hover:text-orange-600 cursor-pointer"
+                      >
+                        {showAdvanced ? "- Hide" : "+ Show"} Advanced Features
+                      </button>
+                      {showAdvanced && (
+                        <div className="mt-3 space-y-2">
+                          {[
+                            { key: "payment", label: "Payment Integration (M-Pesa/Card)", price: 10000 },
+                            { key: "auth", label: "User Authentication", price: 8000 },
+                            { key: "database", label: "Database Integration", price: 6000 },
+                            { key: "admin", label: "Admin Dashboard", price: 12000 },
+                            { key: "booking", label: "Booking System", price: 15000 },
+                          ].map((addon) => (
+                            <div key={addon.key} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                              <label className="flex items-center cursor-pointer flex-1">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedAddOns[addon.key] || false}
+                                  onChange={() => toggleAddOn(addon.key)}
+                                  className="mr-3 w-4 h-4 accent-orange-500 cursor-pointer"
+                                />
+                                <span className="text-sm">{addon.label}</span>
+                              </label>
+                              <span className="text-sm font-medium">+{addon.price.toLocaleString()}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right Column - Summary */}
+                  <div className="lg:col-span-1">
+                    <div className="sticky top-24 bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 p-6 rounded-lg border-2 border-orange-200 dark:border-orange-800">
+                      <h4 className="font-bold text-foreground mb-4 text-lg">Your Package</h4>
+                      <div className="space-y-2 text-sm mb-6">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Base Package</span>
+                          <span className="font-medium">5,000</span>
+                        </div>
+                        {additionalPagesCount > 0 && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">+ {additionalPagesCount} Pages</span>
+                            <span className="font-medium">{(additionalPagesCount * 2000).toLocaleString()}</span>
+                          </div>
+                        )}
+                        {selectedAddOns.seo && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">+ SEO</span>
+                            <span className="font-medium">4,000</span>
+                          </div>
+                        )}
+                        {selectedAddOns.whatsapp && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">+ WhatsApp</span>
+                            <span className="font-medium">1,500</span>
+                          </div>
+                        )}
+                        {selectedAddOns.contactForm && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">+ Contact Form</span>
+                            <span className="font-medium">2,000</span>
+                          </div>
+                        )}
+                        {selectedAddOns.analytics && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">+ Analytics</span>
+                            <span className="font-medium">1,500</span>
+                          </div>
+                        )}
+                        {selectedAddOns.blogSection && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">+ Blog Section</span>
+                            <span className="font-medium">5,000</span>
+                          </div>
+                        )}
+                        {selectedDomain && (
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">
+                              + Domain ({selectedDomain === "coKe" ? ".co.ke" : selectedDomain === "com" ? ".com" : selectedDomain === "org" ? ".org" : ".net"})
+                            </span>
+                            <span className="font-medium">{selectedDomain === "coKe" ? "1,000" : "1,500"}</span>
+                          </div>
+                        )}
+                        {Object.keys(selectedAddOns).filter(key => selectedAddOns[key] && ['payment', 'auth', 'database', 'admin', 'booking'].includes(key)).map(key => (
+                          <div key={key} className="flex justify-between">
+                            <span className="text-muted-foreground">
+                              + {key === 'payment' ? 'Payment' : key === 'auth' ? 'Auth' : key === 'database' ? 'Database' : key === 'admin' ? 'Admin' : 'Booking'}
+                            </span>
+                            <span className="font-medium">
+                              {key === 'payment' ? '10,000' : key === 'auth' ? '8,000' : key === 'database' ? '6,000' : key === 'admin' ? '12,000' : '15,000'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="border-t-2 border-orange-300 dark:border-orange-700 pt-4 mb-6">
+                        <div className="flex justify-between items-center">
+                          <span className="font-bold text-lg">TOTAL:</span>
+                          <span className="font-bold text-2xl text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                            KES {calculateTotalPrice().toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => window.open(`https://wa.me/254115588218?text=${getCalculatorWhatsAppMessage()}`, "_blank")}
+                        className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white mb-3 cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                        </svg>
+                        Send to WhatsApp
+                      </Button>
+                      <p className="text-xs text-center text-muted-foreground mb-3">
+                        💬 Your package details will be pre-filled
+                      </p>
+                      <Button
+                        onClick={() => openEmailModal(`Custom Package - KES ${calculateTotalPrice().toLocaleString()}`, getCalculatorEmailDetails())}
+                        variant="outline"
+                        className="w-full border-2 cursor-pointer"
+                      >
+                        Prefer Email? Quick Form
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Note */}
+                <div className="mt-8 text-center text-sm text-muted-foreground">
+                  <p className="mb-2">
+                    All prices are estimates. Final pricing depends on specific requirements and complexity.
+                  </p>
+                  <p className="font-medium">
+                    💳 Flexible payment: 40% deposit • 60% on completion • M-Pesa accepted
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </section>
 
@@ -1244,7 +2209,7 @@ export default function HomePage() {
             <div>
               <h4 className="text-white font-semibold mb-4 text-base font-heading">Quick Links</h4>
               <ul className="space-y-2">
-                {["Home", "About", "Services", "Portfolio", "Contact"].map((item) => (
+                {["Home", "About", "Services", "Pricing", "Portfolio", "Contact"].map((item) => (
                   <li key={item}>
                     <button
                       onClick={() => scrollToSection(item.toLowerCase())}

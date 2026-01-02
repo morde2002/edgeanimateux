@@ -29,14 +29,14 @@ export async function submitContactForm(data: ContactFormData) {
       from: `"${data.name}" <${data.email}>`,
       envelope: {
         from: process.env.EMAIL_USER,
-        to: "easeanimateux@gmail.com",
+        to: "xeleratedtech@gmail.com",
       },
-      to: "easeanimateux@gmail.com",
+      to: "xeleratedtech@gmail.com",
       subject: `New Contact Form Submission: ${data.subject}`,
       html: `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
       <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #f97316; margin: 0;">EaseAnimateUX</h1>
+        <h1 style="color: #f97316; margin: 0;">Xelerated Tech</h1>
         <p style="color: #666; margin: 5px 0;">New Contact Form Submission</p>
       </div>
       
@@ -64,7 +64,7 @@ export async function submitContactForm(data: ContactFormData) {
       
       <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
         <p style="color: #888; font-size: 14px;">
-          This email was sent from the EaseAnimateUX contact form.<br>
+          This email was sent from the Xelerated Tech contact form.<br>
           Reply directly to this email to respond to ${data.name}.
         </p>
       </div>
