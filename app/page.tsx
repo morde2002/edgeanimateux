@@ -97,9 +97,18 @@ const services = [
 // Portfolio items for Xelerated Tech
 const portfolioItems = [
   {
+    title: "All Ladies Martial Arts Academy",
+    description: "Premier women-only martial arts academy in Mombasa, led by World Championship Bronze Medalist, empowering women through self-defense and competitive martial arts training.",
+    image: "/projects/ALMA Website.webp",
+    category: "Women's Martial Arts",
+    technologies: ["Next.js", "React", "Tailwind CSS", "Schema.org"],
+    url: "https://allladiestimd.com/",
+    gradient: "from-pink-500 to-pink-600",
+  },
+  {
     title: "Hisia Youth Website",
     description: "Community-focused platform for Hisia Youth Guiding and Counselling CBO, empowering youth development and mentorship programs in Likoni sub-county.",
-    image: "/images/hisia-youth.png",
+    image: "/projects/Hisia Youth Website.webp",
     category: "Non-Profit Website",
     technologies: ["Next.js", "React", "Tailwind CSS", "CMS"],
     url: "https://morde2002.github.io/hisiayouth.github.io/",
@@ -108,25 +117,16 @@ const portfolioItems = [
   {
     title: "Baraka Mining Portal",
     description: "Professional mining company website showcasing sustainable gem mining operations and rare mineral exploration services across Kenya.",
-    image: "/images/baraka-mining.png",
+    image: "/projects/Baraka MIning Website.webp",
     category: "Business Website",
     technologies: ["React", "Node.js", "MongoDB", "Responsive Design"],
     url: "https://barakaminingltd.co.ke",
     gradient: "from-blue-500 to-blue-600",
   },
   {
-    title: "Airbnb Clone Application",
-    description: "Full-featured vacation rental platform with property listings, booking system, user authentication, and seamless payment processing.",
-    image: "/images/airbnb.png",
-    category: "Web Application",
-    technologies: ["Next.js", "MongoDB", "Prisma", "NextAuth"],
-    url: "https://airbnb-roomrho.vercel.app/",
-    gradient: "from-pink-500 to-pink-600",
-  },
-  {
     title: "Construction Company Website",
     description: "Professional construction business website featuring project galleries, service portfolios, and client testimonials with modern responsive design.",
-    image: "/images/construction.png",
+    image: "/projects/construction website.webp",
     category: "Corporate Website",
     technologies: ["React", "Tailwind CSS", "Framer Motion", "Vercel"],
     url: "https://construction-website254.vercel.app/",
@@ -135,7 +135,7 @@ const portfolioItems = [
   {
     title: "Safaris Adventure Platform",
     description: "Comprehensive road transport and safari booking platform offering celebration packages, adventure tours, and customized travel solutions.",
-    image: "/images/safaris-adventure.png",
+    image: "/projects/safari website.webp",
     category: "Travel & Tourism",
     technologies: ["Next.js", "React", "Stripe", "Google Maps API"],
     url: "https://safaris-adventure.vercel.app/",
@@ -144,7 +144,7 @@ const portfolioItems = [
   {
     title: "Personal Portfolio Website",
     description: "Modern developer portfolio showcasing skills, projects, and professional experience with interactive animations and responsive design.",
-    image: "/images/portfolio.png",
+    image: "/projects/portfolio website.webp",
     category: "Portfolio Website",
     technologies: ["HTML5", "CSS3", "JavaScript", "GSAP"],
     url: "https://morde2002.github.io/mordecaiportfolio.github.io/",
@@ -1087,7 +1087,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="max-w-4xl mx-auto text-center mb-16"
           >
             <Badge className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-2 text-sm font-medium mb-6">
@@ -1139,7 +1139,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.3 }}
                 whileHover={{ y: -10 }}
                 className="text-center group p-6"
               >
@@ -1163,7 +1163,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center mb-16"
           >
             <Badge className="bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-4 py-2 text-sm font-medium mb-6">
@@ -1188,7 +1188,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.3 }}
                 whileHover={{ y: -10, scale: 1.02 }}
                 className="group"
               >
@@ -1227,7 +1227,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center mb-16"
           >
             <Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-4 py-2 text-sm font-medium mb-6">
@@ -1251,7 +1251,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.3 }}
               whileHover={{ y: -5 }}
             >
               <Card className="bg-card border-2 border-green-300 dark:border-green-600 relative h-full">
@@ -1297,7 +1297,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.3 }}
               whileHover={{ y: -5 }}
             >
               <Card className="bg-card border-2 border-blue-300 dark:border-blue-600 relative h-full">
@@ -1343,7 +1343,7 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.3 }}
               whileHover={{ y: -5 }}
             >
               <Card className="bg-card border-2 border-purple-300 dark:border-purple-600 relative h-full">
@@ -1390,7 +1390,7 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center my-12"
           >
             <p className="text-lg text-muted-foreground mb-2">Or build your custom package below</p>
@@ -1402,7 +1402,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="max-w-6xl mx-auto"
           >
             <Card className="bg-card border-border shadow-xl">
@@ -1820,7 +1820,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center mb-16"
           >
             <Badge className="bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 px-4 py-2 text-sm font-medium mb-6">
@@ -1838,69 +1838,88 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {portfolioItems.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -10 }}
-                className="group"
-              >
-                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 overflow-hidden shadow-sm hover:shadow-xl">
-                  <div className="relative h-64 overflow-hidden">
-                    <Image
-                      src={item.image || "/placeholder.svg"}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
-                    <div className="absolute top-4 left-4">
-                      <Badge className={`bg-gradient-to-r ${item.gradient} text-white text-xs`}>{item.category}</Badge>
-                    </div>
+          <div className="space-y-24 max-w-7xl mx-auto">
+            {portfolioItems.map((item, index) => {
+              const isEven = index % 2 === 0
+              return (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, x: isEven ? -100 : 100 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  viewport={{ once: false, amount: 0.3 }}
+                  className={`flex flex-col ${
+                    isEven ? "lg:flex-row" : "lg:flex-row-reverse"
+                  } gap-8 lg:gap-12 items-center`}
+                >
+                  {/* Image Section */}
+                  <div className="w-full lg:w-1/2">
                     <motion.div
-                      className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      whileHover={{ scale: 1.1 }}
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative w-full"
                     >
-                      <Button
-                        asChild
-                        className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                      >
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
-                          <ArrowRight className="h-4 w-4 mr-2" />
-                          View Project
-                        </a>
-                      </Button>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer block">
+                        <Image
+                          src={item.image || "/placeholder.svg"}
+                          alt={item.title}
+                          width={1600}
+                          height={1200}
+                          className="w-full h-auto object-contain"
+                          loading={index === 0 ? "eager" : "lazy"}
+                          priority={index === 0}
+                          quality={90}
+                        />
+                      </a>
                     </motion.div>
                   </div>
-                  <CardHeader className="p-6">
-                    <CardTitle className="text-gray-900 dark:text-white text-xl group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-orange-500 group-hover:to-orange-600 group-hover:bg-clip-text transition-all duration-300 font-heading">
+
+                  {/* Info Section */}
+                  <div className="w-full lg:w-1/2 text-center lg:text-left">
+                    <Badge className={`bg-gradient-to-r ${item.gradient} text-white px-3 py-1 text-xs mb-4 inline-block`}>
+                      {item.category}
+                    </Badge>
+
+                    <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 font-heading">
                       {item.title}
-                    </CardTitle>
-                    <p className="text-base text-gray-600 dark:text-gray-400">{item.description}</p>
-                  </CardHeader>
-                  <CardContent className="p-6 pt-0">
-                    <div className="flex flex-wrap gap-2">
+                    </h3>
+
+                    <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
+                      {item.description}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 mb-6 justify-center lg:justify-start">
                       {item.technologies.map((tech, techIndex) => (
-                        <Badge key={techIndex} variant="secondary" className="text-xs">
+                        <Badge
+                          key={techIndex}
+                          variant="secondary"
+                          className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                        >
                           {tech}
                         </Badge>
                       ))}
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+
+                    <Button
+                      asChild
+                      className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white cursor-pointer inline-flex items-center gap-2"
+                    >
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                        Visit Website
+                        <ArrowRight className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            viewport={{ once: true }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: false, amount: 0.5 }}
             className="text-center mt-12"
           >
             <Button
@@ -1921,7 +1940,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center mb-16"
           >
             <Badge className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-4 py-2 text-sm font-medium mb-6">
@@ -1946,7 +1965,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.3 }}
                 whileHover={{ y: -10, scale: 1.02 }}
                 className="group"
               >
@@ -1971,7 +1990,7 @@ export default function HomePage() {
                           initial={{ opacity: 0, scale: 0 }}
                           whileInView={{ opacity: 1, scale: 1 }}
                           transition={{ delay: index * 0.1 + i * 0.1 }}
-                          viewport={{ once: true }}
+                          viewport={{ once: false, amount: 0.3 }}
                         >
                           <svg className="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
                             <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
@@ -2004,7 +2023,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center mb-16"
           >
             <Badge className="bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-4 py-2 text-sm font-medium mb-6">
@@ -2028,7 +2047,7 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.3 }}
               >
                 <FAQItem question={faq.question} answer={faq.answer} />
               </motion.div>
@@ -2044,7 +2063,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.3 }}
             className="text-center mb-16"
           >
             <Badge className="bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300 px-4 py-2 text-sm font-medium mb-6">
@@ -2068,7 +2087,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.3 }}
             >
               <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">
                 <CardHeader className="p-6">
@@ -2180,7 +2199,7 @@ export default function HomePage() {
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.3 }}
               className="space-y-8"
             >
               <div>
