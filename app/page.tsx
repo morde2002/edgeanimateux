@@ -307,6 +307,7 @@ export default function HomePage() {
   const [isModalSubmitting, setIsModalSubmitting] = useState(false)
   const [modalSubmitStatus, setModalSubmitStatus] = useState<"idle" | "success" | "error">("idle")
   const [modalSubmitMessage, setModalSubmitMessage] = useState("")
+  const [isPackageSummaryExpanded, setIsPackageSummaryExpanded] = useState(false)
 
   const { scrollYProgress } = useScroll()
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
@@ -504,6 +505,33 @@ export default function HomePage() {
     details += `\nTOTAL PACKAGE PRICE: KES ${total.toLocaleString()}`
 
     return details
+  }
+
+  // Get compact summary of selected features
+  const getSelectedFeaturesSummary = () => {
+    const features: string[] = []
+
+    if (additionalPagesCount > 0) {
+      features.push(`${additionalPagesCount} Page${additionalPagesCount > 1 ? 's' : ''}`)
+    }
+    if (selectedAddOns.seo) features.push("SEO")
+    if (selectedAddOns.whatsapp) features.push("WhatsApp")
+    if (selectedAddOns.contactForm) features.push("Contact Form")
+    if (selectedAddOns.analytics) features.push("Analytics")
+    if (selectedAddOns.socialMedia) features.push("Social Media")
+    if (selectedAddOns.blogSection) features.push("Blog")
+    if (selectedAddOns.animations) features.push("Animations")
+    if (selectedDomain) {
+      const domainName = selectedDomain === "coKe" ? ".co.ke" : selectedDomain === "com" ? ".com" : selectedDomain === "org" ? ".org" : ".net"
+      features.push(`Domain ${domainName}`)
+    }
+    if (selectedAddOns.payment) features.push("Payments")
+    if (selectedAddOns.auth) features.push("Authentication")
+    if (selectedAddOns.database) features.push("Database")
+    if (selectedAddOns.admin) features.push("Admin Panel")
+    if (selectedAddOns.booking) features.push("Booking System")
+
+    return features
   }
 
   // Generate formatted WhatsApp message for calculator
@@ -1417,6 +1445,111 @@ export default function HomePage() {
                   <p className="text-xs text-center text-muted-foreground mt-3">
                     💡 Tip: Slide to auto-select features, or manually customize below
                   </p>
+                </div>
+
+                {/* Compact Package Summary */}
+                <div className="mb-8">
+                  <div className="bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900 p-5 rounded-xl border-2 border-orange-200 dark:border-orange-800">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-orange-500 rounded-lg p-2">
+                          <Check className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-muted-foreground">Your Package Total</p>
+                          <p className="text-2xl md:text-3xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
+                            KES {calculateTotalPrice().toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setIsPackageSummaryExpanded(!isPackageSummaryExpanded)}
+                        className="text-sm font-medium text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 flex items-center gap-1 cursor-pointer"
+                      >
+                        {isPackageSummaryExpanded ? "Hide" : "View"} Details
+                        <ChevronDown className={`h-4 w-4 transition-transform ${isPackageSummaryExpanded ? "rotate-180" : ""}`} />
+                      </button>
+                    </div>
+
+                    {/* Compact feature list */}
+                    {getSelectedFeaturesSummary().length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {getSelectedFeaturesSummary().slice(0, isPackageSummaryExpanded ? undefined : 5).map((feature, index) => (
+                          <Badge key={index} className="bg-white dark:bg-gray-800 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-700">
+                            ✓ {feature}
+                          </Badge>
+                        ))}
+                        {!isPackageSummaryExpanded && getSelectedFeaturesSummary().length > 5 && (
+                          <Badge className="bg-white dark:bg-gray-800 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-700">
+                            +{getSelectedFeaturesSummary().length - 5} more
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+
+                    {getSelectedFeaturesSummary().length === 0 && (
+                      <p className="text-sm text-muted-foreground italic">
+                        Base package only. Add features below or use the slider above.
+                      </p>
+                    )}
+
+                    {/* Expanded details */}
+                    <AnimatePresence>
+                      {isPackageSummaryExpanded && getSelectedFeaturesSummary().length > 0 && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="mt-3 pt-3 border-t border-orange-300 dark:border-orange-700 overflow-hidden"
+                        >
+                          <p className="text-xs text-muted-foreground mb-2">Selected Features:</p>
+                          <div className="text-sm space-y-1">
+                            <div className="flex justify-between">
+                              <span className="text-muted-foreground">Base Package</span>
+                              <span className="font-medium">KES 5,000</span>
+                            </div>
+                            {additionalPagesCount > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">+ {additionalPagesCount} Page{additionalPagesCount > 1 ? 's' : ''}</span>
+                                <span className="font-medium">KES {(additionalPagesCount * 2000).toLocaleString()}</span>
+                              </div>
+                            )}
+                            {selectedAddOns.seo && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">+ SEO</span>
+                                <span className="font-medium">KES 4,000</span>
+                              </div>
+                            )}
+                            {selectedAddOns.whatsapp && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">+ WhatsApp</span>
+                                <span className="font-medium">KES 1,500</span>
+                              </div>
+                            )}
+                            {selectedAddOns.contactForm && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">+ Contact Form</span>
+                                <span className="font-medium">KES 2,000</span>
+                              </div>
+                            )}
+                            {selectedAddOns.analytics && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">+ Analytics</span>
+                                <span className="font-medium">KES 1,500</span>
+                              </div>
+                            )}
+                            {selectedDomain && (
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">+ Domain ({selectedDomain === "coKe" ? ".co.ke" : selectedDomain === "com" ? ".com" : selectedDomain === "org" ? ".org" : ".net"})</span>
+                                <span className="font-medium">KES {selectedDomain === "coKe" ? "1,000" : "1,500"}</span>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
 
                 {/* Two Column Layout */}
