@@ -29,6 +29,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Dialog,
   DialogContent,
@@ -309,6 +310,9 @@ export default function HomePage() {
   const [modalSubmitMessage, setModalSubmitMessage] = useState("")
   const [isPackageSummaryExpanded, setIsPackageSummaryExpanded] = useState(false)
 
+  // Image loading state
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({})
+
   const { scrollYProgress } = useScroll()
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
   const mouseX = useMotionValue(0)
@@ -360,9 +364,13 @@ export default function HomePage() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" })
+      // Close menu first on mobile for better UX
+      setIsMenuOpen(false)
+      // Small delay to let menu close animation start, then scroll
+      setTimeout(() => {
+        element.scrollIntoView({ behavior: "smooth" })
+      }, 100)
     }
-    setIsMenuOpen(false)
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -896,17 +904,24 @@ export default function HomePage() {
             onClick={() => scrollToSection("home")}
           >
             <div className="relative mr-3" style={{ width: '180px', height: '180px' }}>
+              {!loadedImages['nav-logo'] && (
+                <Skeleton className="w-full h-full rounded-lg" />
+              )}
               <Image
                 src="/images/xelerated-logo-dark.png"
                 alt="Xelerated Tech Logo"
                 fill
-                className="object-contain dark:hidden"
+                className={`object-contain dark:hidden ${!loadedImages['nav-logo'] ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+                priority
+                onLoad={() => setLoadedImages(prev => ({ ...prev, 'nav-logo': true }))}
               />
               <Image
                 src="/images/xelerated-logo-light.png"
                 alt="Xelerated Tech Logo"
                 fill
-                className="object-contain hidden dark:block"
+                className={`object-contain hidden dark:block ${!loadedImages['nav-logo'] ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+                priority
+                onLoad={() => setLoadedImages(prev => ({ ...prev, 'nav-logo': true }))}
               />
             </div>
           </motion.div>
@@ -952,18 +967,23 @@ export default function HomePage() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden bg-background/95 backdrop-blur-md border-t border-border"
+              transition={{ duration: 0.3 }}
+              className="lg:hidden bg-background/95 backdrop-blur-md border-t border-border overflow-hidden"
             >
               <div className="container mx-auto px-4 py-4 space-y-3">
                 {["home", "about", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
-                  <motion.button
+                  <button
                     key={item}
                     onClick={() => scrollToSection(item)}
-                    className="block w-full text-left text-foreground hover:text-orange-500 transition-colors py-2 text-base cursor-pointer"
-                    whileHover={{ x: 10 }}
+                    className={`block w-full text-left transition-colors py-3 px-2 text-base cursor-pointer touch-manipulation ${
+                      activeSection === item
+                        ? "text-orange-500 font-bold"
+                        : "text-foreground hover:text-orange-500"
+                    }`}
+                    style={activeSection === item ? { fontWeight: 700 } : {}}
                   >
                     {item.charAt(0).toUpperCase() + item.slice(1)}
-                  </motion.button>
+                  </button>
                 ))}
                 <div className="pt-2">
                   <ThemeToggle />
@@ -1859,7 +1879,15 @@ export default function HomePage() {
                       transition={{ duration: 0.3 }}
                       className="relative w-full"
                     >
-                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="cursor-pointer block">
+                      {!loadedImages[item.title] && (
+                        <Skeleton className="w-full aspect-[4/3] rounded-lg" />
+                      )}
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`cursor-pointer block ${!loadedImages[item.title] ? 'opacity-0 absolute inset-0' : 'opacity-100'} transition-opacity duration-500`}
+                      >
                         <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.title}
@@ -1869,6 +1897,7 @@ export default function HomePage() {
                           loading={index === 0 ? "eager" : "lazy"}
                           priority={index === 0}
                           quality={90}
+                          onLoad={() => setLoadedImages(prev => ({ ...prev, [item.title]: true }))}
                         />
                       </a>
                     </motion.div>
@@ -2346,10 +2375,15 @@ export default function HomePage() {
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <div className="relative" style={{ width: '220px', height: '60px' }}>
+                  {!loadedImages['footer-logo'] && (
+                    <Skeleton className="w-full h-full rounded-lg" />
+                  )}
                   <Image
                     src="/images/xelerated-logo-light.png"
                     alt="Xelerated Tech Logo"
                     fill
+                    className={`object-contain ${!loadedImages['footer-logo'] ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+                    onLoad={() => setLoadedImages(prev => ({ ...prev, 'footer-logo': true }))}
                   />
                 </div>
               </div>
