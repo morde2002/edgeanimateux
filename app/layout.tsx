@@ -4,6 +4,7 @@ import { Inter, Poppins } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Analytics } from "@vercel/analytics/next"
+import { TawkTo } from "@/components/tawk-to"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -19,16 +20,49 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "Xelerated Tech - Your Digital Solutions Partner",
+  title: {
+    default: "Xelerated Tech - Professional Web Design & Development in Kenya | Mobile Apps | UI/UX",
+    template: "%s | Xelerated Tech"
+  },
   description:
-    "Professional web development, digital solutions, and technology consulting services. Transform your business with cutting-edge digital experiences.",
-  keywords: "web development, digital solutions, technology consulting, software development, UI/UX design",
-  authors: [{ name: "Xelerated Tech" }],
+    "Leading web design & development company in Kenya. We build stunning websites, mobile apps, and UI/UX designs from KES 8,000. Serving Mombasa, Nairobi & across Kenya. ✓ Affordable ✓ Fast ✓ Professional. Get your free quote today!",
+  keywords: [
+    // Primary keywords
+    "web design kenya", "web development kenya", "website design kenya", "web designer kenya",
+    "website developer kenya", "web development company kenya", "website design company kenya",
+    // Location-based
+    "web design mombasa", "web developer mombasa", "website design nairobi", "web development nairobi",
+    "web design services kenya", "affordable web design kenya", "cheap website design kenya",
+    // Service-specific
+    "mobile app development kenya", "ui ux design kenya", "ecommerce website kenya",
+    "business website kenya", "portfolio website design", "landing page design kenya",
+    // Long-tail
+    "professional website design kenya", "custom website development kenya",
+    "responsive web design kenya", "modern website design kenya", "website developer near me",
+    // Related services
+    "graphic design kenya", "logo design kenya", "digital marketing kenya",
+    "seo services kenya", "wordpress developer kenya", "react developer kenya"
+  ],
+  authors: [{ name: "Xelerated Tech", url: "https://xeleratedtech.com" }],
   metadataBase: new URL('https://xeleratedtech.com'),
   creator: "Xelerated Tech",
   publisher: "Xelerated Tech",
+  applicationName: "Xelerated Tech",
+  category: "Technology",
+  classification: "Web Development & Design Services",
   verification: {
     google: 'h2-ENtgUsjrxHbZVDWebG2mOhih3HUN4KDXsmGb7G6Q'
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   icons: {
     icon: [
@@ -43,25 +77,31 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   openGraph: {
-    title: "Xelerated Tech - Your Digital Solutions Partner",
-    description: "Professional web development, digital solutions, and technology consulting services.",
+    type: "website",
+    locale: "en_KE",
     url: "https://xeleratedtech.com",
     siteName: "Xelerated Tech",
-    type: "website",
+    title: "Xelerated Tech - Professional Web Design & Development Services in Kenya",
+    description: "Transform your business with stunning websites and mobile apps. Based in Kenya, serving clients nationwide. Affordable packages from KES 8,000. Free consultation available!",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Xelerated Tech - Digital Solutions Partner",
+        alt: "Xelerated Tech - Professional Web Design & Development in Kenya",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Xelerated Tech - Your Digital Solutions Partner",
-    description: "Professional web development, digital solutions, and technology consulting services.",
+    site: "@xeleratedtech",
+    creator: "@xeleratedtech",
+    title: "Xelerated Tech - Web Design & Development Kenya",
+    description: "Professional websites & mobile apps from KES 8,000. ✓ Modern designs ✓ Fast delivery ✓ Kenyan-based. Get your free quote!",
     images: ["/XeleratedTech-logo.png"],
+  },
+  alternates: {
+    canonical: "https://xeleratedtech.com",
   },
 }
 
@@ -76,6 +116,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
           <Analytics />
+          <TawkTo />
         </ThemeProvider>
       </body>
     </html>

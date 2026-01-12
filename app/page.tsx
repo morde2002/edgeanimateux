@@ -60,24 +60,10 @@ const services = [
   },
   {
     icon: Smartphone,
-    title: "Mobile Solutions",
+    title: "Mobile Apps",
     description: "Native and cross-platform mobile applications that deliver exceptional user experiences.",
     features: ["iOS & Android Apps", "Cross-Platform Development", "UI/UX Design", "App Store Optimization"],
     gradient: "from-blue-500 to-blue-600",
-  },
-  {
-    icon: Globe,
-    title: "Digital Strategy",
-    description: "Comprehensive digital transformation strategies to accelerate your business growth.",
-    features: ["Digital Consulting", "Technology Roadmaps", "Process Automation", "Digital Marketing"],
-    gradient: "from-purple-500 to-purple-600",
-  },
-  {
-    icon: Zap,
-    title: "Cloud Solutions",
-    description: "Scalable cloud infrastructure and services to power your digital transformation.",
-    features: ["Cloud Migration", "Infrastructure Setup", "DevOps Implementation", "Security & Compliance"],
-    gradient: "from-green-500 to-green-600",
   },
   {
     icon: Users,
@@ -86,14 +72,10 @@ const services = [
     features: ["User Research", "Wireframing & Prototyping", "Visual Design", "Usability Testing"],
     gradient: "from-pink-500 to-pink-600",
   },
-  {
-    icon: Award,
-    title: "Consulting Services",
-    description: "Expert technology consulting to help you make informed decisions and optimize operations.",
-    features: ["Technology Assessment", "Architecture Planning", "Team Training", "Project Management"],
-    gradient: "from-indigo-500 to-indigo-600",
-  },
 ]
+
+// Additional services we offer
+const additionalServices = ["E-commerce Solutions", "Cloud Integration", "Website Maintenance"]
 
 // Portfolio items for Xelerated Tech
 const portfolioItems = [
@@ -313,6 +295,10 @@ export default function HomePage() {
   // Image loading state
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({})
 
+  // Testimonial carousel state
+  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
+
   const { scrollYProgress } = useScroll()
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
   const mouseX = useMotionValue(0)
@@ -360,6 +346,16 @@ export default function HomePage() {
       }
     }
   }, [])
+
+  // Auto-scroll testimonials
+  useEffect(() => {
+    if (!isPaused) {
+      const interval = setInterval(() => {
+        setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)
+      }, 5000) // Change every 5 seconds
+      return () => clearInterval(interval)
+    }
+  }, [isPaused])
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
@@ -777,6 +773,184 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden transition-colors duration-300">
+      {/* Structured Data (JSON-LD) for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://xeleratedtech.com/#organization",
+                name: "Xelerated Tech",
+                url: "https://xeleratedtech.com",
+                logo: {
+                  "@type": "ImageObject",
+                  url: "https://xeleratedtech.com/XeleratedTech-logo.jpg",
+                  width: 250,
+                  height: 60
+                },
+                description: "Professional web design and development company in Kenya specializing in websites, mobile apps, and UI/UX design.",
+                address: {
+                  "@type": "PostalAddress",
+                  addressCountry: "KE",
+                  addressRegion: "Mombasa",
+                  addressLocality: "Mombasa"
+                },
+                contactPoint: {
+                  "@type": "ContactPoint",
+                  telephone: "+254-115-588-218",
+                  contactType: "Customer Service",
+                  areaServed: "KE",
+                  availableLanguage: ["English", "Swahili"]
+                },
+                sameAs: [
+                  "https://twitter.com/xeleratedtech",
+                  "https://www.facebook.com/xeleratedtech",
+                  "https://www.linkedin.com/company/xeleratedtech",
+                  "https://www.instagram.com/xeleratedtech"
+                ]
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://xeleratedtech.com/#website",
+                url: "https://xeleratedtech.com",
+                name: "Xelerated Tech",
+                description: "Professional web design & development services in Kenya",
+                publisher: {
+                  "@id": "https://xeleratedtech.com/#organization"
+                },
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: "https://xeleratedtech.com/?s={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@type": "ProfessionalService",
+                "@id": "https://xeleratedtech.com/#service",
+                name: "Xelerated Tech - Web Design & Development",
+                image: "https://xeleratedtech.com/XeleratedTech-logo.jpg",
+                priceRange: "KES 8,000 - KES 100,000",
+                address: {
+                  "@type": "PostalAddress",
+                  addressCountry: "KE",
+                  addressRegion: "Mombasa"
+                },
+                geo: {
+                  "@type": "GeoCoordinates",
+                  latitude: -4.0435,
+                  longitude: 39.6682
+                },
+                url: "https://xeleratedtech.com",
+                telephone: "+254-115-588-218",
+                openingHoursSpecification: {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  opens: "08:00",
+                  closes: "18:00"
+                },
+                areaServed: {
+                  "@type": "Country",
+                  name: "Kenya"
+                },
+                hasOfferCatalog: {
+                  "@type": "OfferCatalog",
+                  name: "Web Development Services",
+                  itemListElement: [
+                    {
+                      "@type": "Offer",
+                      itemOffered: {
+                        "@type": "Service",
+                        name: "Landing Page Website",
+                        description: "Single page responsive website with contact form",
+                        provider: {
+                          "@id": "https://xeleratedtech.com/#organization"
+                        }
+                      },
+                      priceSpecification: {
+                        "@type": "PriceSpecification",
+                        priceCurrency: "KES",
+                        price: "8000-15000"
+                      }
+                    },
+                    {
+                      "@type": "Offer",
+                      itemOffered: {
+                        "@type": "Service",
+                        name: "Small Business Website",
+                        description: "Multi-page website for small businesses",
+                        provider: {
+                          "@id": "https://xeleratedtech.com/#organization"
+                        }
+                      },
+                      priceSpecification: {
+                        "@type": "PriceSpecification",
+                        priceCurrency: "KES",
+                        price: "25000-50000"
+                      }
+                    },
+                    {
+                      "@type": "Offer",
+                      itemOffered: {
+                        "@type": "Service",
+                        name: "Mobile App Development",
+                        description: "iOS and Android mobile application development"
+                      }
+                    },
+                    {
+                      "@type": "Offer",
+                      itemOffered: {
+                        "@type": "Service",
+                        name: "UI/UX Design",
+                        description: "User interface and user experience design services"
+                      }
+                    }
+                  ]
+                },
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: "5",
+                  reviewCount: "4",
+                  bestRating: "5",
+                  worstRating: "1"
+                }
+              },
+              {
+                "@type": "BreadcrumbList",
+                "@id": "https://xeleratedtech.com/#breadcrumb",
+                itemListElement: [
+                  {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Home",
+                    item: "https://xeleratedtech.com"
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Services",
+                    item: "https://xeleratedtech.com/#services"
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: "Pricing",
+                    item: "https://xeleratedtech.com/#pricing"
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 4,
+                    name: "Portfolio",
+                    item: "https://xeleratedtech.com/#portfolio"
+                  }
+                ]
+              }
+            ]
+          })
+        }}
+      />
 
       {/* Back to Top Button */}
       <BackToTopButton />
@@ -928,7 +1102,7 @@ export default function HomePage() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {["home", "about", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
+            {["home", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
               <motion.button
                 key={item}
                 onClick={() => scrollToSection(item)}
@@ -971,7 +1145,7 @@ export default function HomePage() {
               className="lg:hidden bg-background/95 backdrop-blur-md border-t border-border overflow-hidden"
             >
               <div className="container mx-auto px-4 py-4 space-y-3">
-                {["home", "about", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
+                {["home", "services", "pricing", "portfolio", "testimonials", "contact"].map((item) => (
                   <button
                     key={item}
                     onClick={() => scrollToSection(item)}
@@ -1100,82 +1274,6 @@ export default function HomePage() {
         </motion.div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="py-20 relative">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: false, amount: 0.3 }}
-            className="max-w-4xl mx-auto text-center mb-16"
-          >
-            <Badge className="bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-2 text-sm font-medium mb-6">
-              About Xelerated Tech
-            </Badge>
-            <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-8 font-heading">
-              Your Trusted{" "}
-              <span className="text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
-                Technology Partner
-              </span>
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
-              At Xelerated Tech, we specialize in transforming businesses through innovative digital solutions. Our team
-              of experienced developers, designers, and strategists work collaboratively to deliver cutting-edge
-              technology solutions that drive growth and success.
-            </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              From startups to enterprises, we've helped businesses across various industries establish powerful digital
-              presences, streamline operations, and achieve their technology goals with precision and excellence.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              {
-                icon: Target,
-                title: "Our Mission",
-                description:
-                  "To accelerate business growth through innovative technology solutions that deliver measurable results and exceptional user experiences.",
-                gradient: "from-orange-500 to-orange-600",
-              },
-              {
-                icon: Users,
-                title: "Our Approach",
-                description:
-                  "We believe in collaborative partnerships, understanding your unique needs, and delivering solutions that exceed expectations through agile methodologies.",
-                gradient: "from-blue-500 to-blue-600",
-              },
-              {
-                icon: Award,
-                title: "Our Promise",
-                description:
-                  "We deliver high-quality, scalable solutions on time and within budget, with ongoing support to ensure your continued success.",
-                gradient: "from-purple-500 to-purple-600",
-              },
-            ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: false, amount: 0.3 }}
-                whileHover={{ y: -10 }}
-                className="text-center group p-6"
-              >
-                <div
-                  className={`w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-r ${item.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}
-                >
-                  <item.icon className="h-8 w-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-4 font-heading">{item.title}</h3>
-                <p className="text-base text-muted-foreground leading-relaxed">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Services Section */}
       <section id="services" className="py-20 bg-muted/30 relative">
         <div className="container mx-auto px-4">
@@ -1201,7 +1299,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {services.map((service, index) => (
               <motion.div
                 key={service.title}
@@ -1236,6 +1334,30 @@ export default function HomePage() {
               </motion.div>
             ))}
           </div>
+
+          {/* Additional Services Note */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: false, amount: 0.3 }}
+            className="mt-12 text-center"
+          >
+            <p className="text-base text-muted-foreground mb-3">
+              <span className="font-semibold text-foreground">We also offer:</span>
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {additionalServices.map((service, index) => (
+                <Badge
+                  key={index}
+                  variant="secondary"
+                  className="text-sm px-4 py-1.5 bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800"
+                >
+                  {service}
+                </Badge>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -1987,60 +2109,91 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={testimonial.name}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                viewport={{ once: false, amount: 0.3 }}
-                whileHover={{ y: -10, scale: 1.02 }}
-                className="group"
-              >
-                <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-600 transition-all duration-300 h-full shadow-sm hover:shadow-lg">
-                  <CardHeader className="text-center pb-4">
-                    <div className="relative w-16 h-16 mx-auto mb-4">
-                      <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${testimonial.gradient} p-0.5`}>
-                        <div className="w-full h-full rounded-full bg-white dark:bg-gray-900 flex items-center justify-center">
-                          <span className="text-2xl font-bold text-gray-700 dark:text-gray-300 font-heading">
-                            {testimonial.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </span>
+          {/* Carousel Container */}
+          <div className="max-w-4xl mx-auto">
+            <div
+              className="relative"
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+            >
+              {/* Testimonials - AnimatePresence for smooth fade */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentTestimonial}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                >
+                  <Card className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-lg">
+                    <CardHeader className="text-center pb-4">
+                      <div className="relative w-20 h-20 mx-auto mb-4">
+                        <div className={`absolute inset-0 rounded-full bg-gradient-to-r ${testimonials[currentTestimonial].gradient} p-0.5`}>
+                          <div className="w-full h-full rounded-full bg-white dark:bg-gray-900 flex items-center justify-center">
+                            <span className="text-3xl font-bold text-gray-700 dark:text-gray-300 font-heading">
+                              {testimonials[currentTestimonial].name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex justify-center mb-3">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          initial={{ opacity: 0, scale: 0 }}
-                          whileInView={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: index * 0.1 + i * 0.1 }}
-                          viewport={{ once: false, amount: 0.3 }}
-                        >
-                          <svg className="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
+                      <div className="flex justify-center mb-4">
+                        {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => (
+                          <svg key={i} className="w-5 h-5 text-orange-400 fill-current" viewBox="0 0 20 20">
                             <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                           </svg>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <blockquote className="text-base text-gray-600 dark:text-gray-400 text-center mb-4 italic leading-relaxed">
-                      "{testimonial.content}"
-                    </blockquote>
-                    <div className="text-center">
-                      <h4 className="font-semibold text-gray-900 dark:text-white font-heading">{testimonial.name}</h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{testimonial.role}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">{testimonial.company}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+                        ))}
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0 px-8 pb-8">
+                      <blockquote className="text-lg text-gray-600 dark:text-gray-400 text-center mb-6 italic leading-relaxed">
+                        "{testimonials[currentTestimonial].content}"
+                      </blockquote>
+                      <div className="text-center">
+                        <h4 className="font-semibold text-xl text-gray-900 dark:text-white font-heading">
+                          {testimonials[currentTestimonial].name}
+                        </h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{testimonials[currentTestimonial].role}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500">{testimonials[currentTestimonial].company}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Navigation Dots */}
+              <div className="flex justify-center gap-2 mt-8">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setCurrentTestimonial(index)
+                      setIsPaused(true)
+                      setTimeout(() => setIsPaused(false), 3000) // Resume after 3s
+                    }}
+                    className={`transition-all duration-300 rounded-full ${
+                      currentTestimonial === index
+                        ? 'w-8 h-3 bg-orange-500'
+                        : 'w-3 h-3 bg-gray-300 dark:bg-gray-600 hover:bg-orange-300'
+                    }`}
+                    aria-label={`Go to testimonial ${index + 1}`}
+                  />
+                ))}
+              </div>
+
+              {/* Pause indicator */}
+              {isPaused && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute top-4 right-4 bg-orange-500 text-white text-xs px-2 py-1 rounded-full"
+                >
+                  Paused
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -2395,7 +2548,7 @@ export default function HomePage() {
             <div>
               <h4 className="text-white font-semibold mb-4 text-base font-heading">Quick Links</h4>
               <ul className="space-y-2">
-                {["Home", "About", "Services", "Pricing", "Portfolio", "Contact"].map((item) => (
+                {["Home", "Services", "Pricing", "Portfolio", "Contact"].map((item) => (
                   <li key={item}>
                     <button
                       onClick={() => scrollToSection(item.toLowerCase())}
