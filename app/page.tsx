@@ -97,15 +97,15 @@ const portfolioItems = [
     url: "https://morde2002.github.io/hisiayouth.github.io/",
     gradient: "from-green-500 to-green-600",
   },
-  {
-    title: "Baraka Mining Portal",
-    description: "Professional mining company website showcasing sustainable gem mining operations and rare mineral exploration services across Kenya.",
-    image: "/projects/Baraka MIning Website.webp",
-    category: "Business Website",
-    technologies: ["React", "Node.js", "MongoDB", "Responsive Design"],
-    url: "https://barakaminingltd.co.ke",
-    gradient: "from-blue-500 to-blue-600",
-  },
+  // {
+  //   title: "Baraka Mining Portal",
+  //   description: "Professional mining company website showcasing sustainable gem mining operations and rare mineral exploration services across Kenya.",
+  //   image: "/projects/Baraka MIning Website.webp",
+  //   category: "Business Website",
+  //   technologies: ["React", "Node.js", "MongoDB", "Responsive Design"],
+  //   url: "https://barakaminingltd.co.ke",
+  //   gradient: "from-blue-500 to-blue-600",
+  // },
   {
     title: "Construction Company Website",
     description: "Professional construction business website featuring project galleries, service portfolios, and client testimonials with modern responsive design.",
@@ -130,7 +130,7 @@ const portfolioItems = [
     image: "/projects/portfolio website.webp",
     category: "Portfolio Website",
     technologies: ["HTML5", "CSS3", "JavaScript", "GSAP"],
-    url: "https://morde2002.github.io/mordecaiportfolio.github.io/",
+    url: "https://mordy-portfolio.vercel.app/",
     gradient: "from-indigo-500 to-indigo-600",
   },
 ]
