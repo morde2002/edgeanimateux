@@ -53,35 +53,35 @@ declare global {
 const services = [
   {
     icon: Code,
-    title: "Web Development",
-    description: "Custom websites and web applications built with modern technologies and best practices.",
-    features: ["Responsive Design", "Modern Frameworks", "Performance Optimization", "SEO Integration"],
+    title: "Digital Presence",
+    description: "Practical websites and landing pages that help businesses present their services clearly and turn visitors into enquiries.",
+    features: ["Business Websites", "Landing Pages", "Mobile-First Design", "Basic SEO Setup"],
     gradient: "from-orange-500 to-orange-600",
   },
   {
     icon: Smartphone,
-    title: "Mobile Apps",
-    description: "Native and cross-platform mobile applications that deliver exceptional user experiences.",
-    features: ["iOS & Android Apps", "Cross-Platform Development", "UI/UX Design", "App Store Optimization"],
+    title: "Website Rescue & Maintenance",
+    description: "Fix, improve, and maintain existing websites so businesses can keep their online presence working reliably.",
+    features: ["Mobile Responsiveness", "Website Fixes", "Performance Improvements", "Ongoing Maintenance"],
     gradient: "from-blue-500 to-blue-600",
   },
   {
     icon: Users,
-    title: "UI/UX Design",
-    description: "User-centered design solutions that create engaging and intuitive digital experiences.",
-    features: ["User Research", "Wireframing & Prototyping", "Visual Design", "Usability Testing"],
+    title: "Digital Products & Frontend",
+    description: "Build interfaces and digital products that connect thoughtful design with reliable frontend implementation.",
+    features: ["React & Next.js", "Responsive Interfaces", "Figma to Code", "API & Database Integration"],
     gradient: "from-pink-500 to-pink-600",
   },
 ]
 
 // Additional services we offer
-const additionalServices = ["E-commerce Solutions", "Cloud Integration", "Website Maintenance"]
+const additionalServices = ["WhatsApp Integration", "Website Troubleshooting", "Technical Support"]
 
 // Portfolio items for Xelerated Tech
 const portfolioItems = [
   {
     title: "All Ladies Martial Arts Academy",
-    description: "Premier women-only martial arts academy in Mombasa, led by World Championship Bronze Medalist, empowering women through self-defense and competitive martial arts training.",
+    description: "A focused digital presence for a women-only martial arts academy in Mombasa, presenting its training programs, mission, and contact options clearly across devices.",
     image: "/projects/ALMA Website.webp",
     category: "Women's Martial Arts",
     technologies: ["Next.js", "React", "Tailwind CSS", "Schema.org"],
@@ -90,7 +90,7 @@ const portfolioItems = [
   },
   {
     title: "Hisia Youth Website",
-    description: "Community-focused platform for Hisia Youth Guiding and Counselling CBO, empowering youth development and mentorship programs in Likoni sub-county.",
+    description: "A community-focused website for Hisia Youth Guiding and Counselling CBO, making its programs, mission, and youth development work easier to discover online.",
     image: "/projects/Hisia Youth Website.webp",
     category: "Non-Profit Website",
     technologies: ["Next.js", "React", "Tailwind CSS", "CMS"],
@@ -108,7 +108,7 @@ const portfolioItems = [
   // },
   {
     title: "Construction Company Website",
-    description: "Professional construction business website featuring project galleries, service portfolios, and client testimonials with modern responsive design.",
+    description: "A responsive business website that presents construction services, project work, and company information in a clearer format for prospective clients.",
     image: "/projects/construction website.webp",
     category: "Corporate Website",
     technologies: ["React", "Tailwind CSS", "Framer Motion", "Vercel"],
@@ -117,7 +117,7 @@ const portfolioItems = [
   },
   {
     title: "Safaris Adventure Platform",
-    description: "Comprehensive road transport and safari booking platform offering celebration packages, adventure tours, and customized travel solutions.",
+    description: "A travel and transport platform designed to present safari packages, celebration tours, and booking options in a structured digital experience.",
     image: "/projects/safari website.webp",
     category: "Travel & Tourism",
     technologies: ["Next.js", "React", "Stripe", "Google Maps API"],
@@ -126,7 +126,7 @@ const portfolioItems = [
   },
   {
     title: "Personal Portfolio Website",
-    description: "Modern developer portfolio showcasing skills, projects, and professional experience with interactive animations and responsive design.",
+    description: "A personal developer portfolio designed to present projects, technical experience, and capabilities through an interactive responsive interface.",
     image: "/projects/portfolio website.webp",
     category: "Portfolio Website",
     technologies: ["HTML5", "CSS3", "JavaScript", "GSAP"],
@@ -229,14 +229,14 @@ const pricingAddOns = {
 // FAQ data
 const faqs = [
   {
-    question: "What services does Xelerated Tech offer?",
+    question: "What can Xelerated Tech help me with?",
     answer:
-      "We offer comprehensive digital solutions including web development, mobile app development, UI/UX design, cloud solutions, digital strategy consulting, and technology consulting services.",
+      "We help with business websites, landing pages, website fixes and maintenance, frontend development, UI/UX implementation, integrations, and custom digital products.",
   },
   {
     question: "How long does a typical project take?",
     answer:
-      "Project timelines vary depending on complexity and scope. Simple websites typically take 2-4 weeks, while complex web applications or mobile apps can take 2-6 months. We provide detailed timelines during our initial consultation.",
+      "Timelines depend on the scope and how quickly content and feedback are available. A focused business website can often be completed within a few weeks, while complex web applications or mobile apps can take 2-6 months. We provide detailed timelines during our initial consultation.",
   },
   {
     question: "Do you provide ongoing support and maintenance?",
@@ -268,6 +268,7 @@ export default function HomePage() {
     email: "",
     subject: "",
     message: "",
+    website: "",
   })
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -388,32 +389,53 @@ export default function HomePage() {
     return errors
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     const errors = validateForm()
-    if (Object.keys(errors).length > 0) {
+    if (Object.keys(errors).length) {
       setFormErrors(errors)
       return
     }
 
     setIsSubmitting(true)
     setSubmitStatus("idle")
+    setSubmitMessage("")
 
     try {
-      const result = await submitContactForm(formData)
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
 
-      if (result.success) {
-        setSubmitStatus("success")
-        setSubmitMessage("Thank you for your message! We'll get back to you within 24 hours.")
-        setFormData({ name: "", email: "", subject: "", message: "" })
-      } else {
-        setSubmitStatus("error")
-        setSubmitMessage(result.error || "Something went wrong. Please try again.")
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Something went wrong")
       }
+
+      setSubmitStatus("success")
+      setSubmitMessage("Thank you. Your message has been sent and we'll get back to you within 24 hours.")
+
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        website: "",
+      })
+
     } catch (error) {
+      console.error("Contact form error:", error)
+
       setSubmitStatus("error")
-      setSubmitMessage("Something went wrong. Please try again.")
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : "Unable to send your message. Please try again."
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -791,7 +813,7 @@ export default function HomePage() {
                   width: 250,
                   height: 60
                 },
-                description: "Professional web design and development company in Kenya specializing in websites, mobile apps, and UI/UX design.",
+                description: "Digital solutions company in Kenya helping businesses build, improve and maintain websites and practical digital products.",
                 address: {
                   "@type": "PostalAddress",
                   addressCountry: "KE",
@@ -817,7 +839,7 @@ export default function HomePage() {
                 "@id": "https://xeleratedtech.com/#website",
                 url: "https://xeleratedtech.com",
                 name: "Xelerated Tech",
-                description: "Professional web design & development services in Kenya",
+                description: "Digital services for business websites, website maintenance, frontend development and custom digital products in Kenya",
                 publisher: {
                   "@id": "https://xeleratedtech.com/#organization"
                 },
@@ -857,14 +879,14 @@ export default function HomePage() {
                 },
                 hasOfferCatalog: {
                   "@type": "OfferCatalog",
-                  name: "Web Development Services",
+                  name: "Digital Presence Services",
                   itemListElement: [
                     {
                       "@type": "Offer",
                       itemOffered: {
                         "@type": "Service",
                         name: "Landing Page Website",
-                        description: "Single page responsive website with contact form",
+                        description: "Focused responsive business page with a clear customer contact path",
                         provider: {
                           "@id": "https://xeleratedtech.com/#organization"
                         }
@@ -879,8 +901,8 @@ export default function HomePage() {
                       "@type": "Offer",
                       itemOffered: {
                         "@type": "Service",
-                        name: "Small Business Website",
-                        description: "Multi-page website for small businesses",
+                        name: "Business Growth Website",
+                        description: "Multi-page responsive website for businesses that need a stronger online presence",
                         provider: {
                           "@id": "https://xeleratedtech.com/#organization"
                         }
@@ -895,16 +917,16 @@ export default function HomePage() {
                       "@type": "Offer",
                       itemOffered: {
                         "@type": "Service",
-                        name: "Mobile App Development",
-                        description: "iOS and Android mobile application development"
+                        name: "Website Rescue & Maintenance",
+                        description: "Website troubleshooting, improvements and ongoing maintenance",
                       }
                     },
                     {
                       "@type": "Offer",
                       itemOffered: {
                         "@type": "Service",
-                        name: "UI/UX Design",
-                        description: "User interface and user experience design services"
+                        name: "Digital Products & Frontend",
+                        description: "Frontend implementation and custom digital product development"
                       }
                     }
                   ]
@@ -1190,7 +1212,7 @@ export default function HomePage() {
               className="mb-8"
             >
               <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-2 text-sm font-medium mb-6">
-                Digital Solutions That Drive Results
+                Practical Digital Solutions for Growing Businesses
               </Badge>
             </motion.div>
 
@@ -1200,11 +1222,11 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.4 }}
             >
-              Accelerate Your{" "}
+              Build, Improve &{" "}
               <span className="text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
-                Digital
+                Maintain
               </span>{" "}
-              Transformation
+              Your Digital Presence
             </motion.h1>
 
             <motion.p
@@ -1213,8 +1235,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.6 }}
             >
-              We partner with businesses to create innovative web solutions, mobile applications, and digital strategies
-              that drive growth and deliver exceptional user experiences.
+              We help businesses, startups and organizations build a stronger digital presence, improve existing websites, and create practical digital products that support real business goals.
             </motion.p>
 
             <motion.div
@@ -1288,14 +1309,13 @@ export default function HomePage() {
               Our Services
             </Badge>
             <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 font-heading">
-              Comprehensive{" "}
+              Practical{" "}
               <span className="text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
-                Digital Solutions
+                Digital Services
               </span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              From concept to deployment, we provide end-to-end technology services that transform your business and
-              accelerate your digital journey.
+              From getting your business online to fixing, improving and maintaining an existing website, we focus on practical solutions that are useful, reliable and easy to manage.
             </p>
           </motion.div>
 
@@ -1376,13 +1396,13 @@ export default function HomePage() {
               Transparent Pricing
             </Badge>
             <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 font-heading">
-              Affordable Solutions for{" "}
+              Flexible Solutions for{" "}
               <span className="text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
-                Every Business
+                Different Needs
               </span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto mb-4">
-              Flexible packages designed for Kenyan businesses, from startups to enterprises
+              Clear starting points for businesses that need a simple online presence, website improvements, or a more custom digital product
             </p>
           </motion.div>
 
@@ -1401,13 +1421,13 @@ export default function HomePage() {
                   <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white">Most Popular</Badge>
                 </div>
                 <CardHeader className="text-center pt-8">
-                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Landing Page</h3>
+                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Business Starter</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
-                      KES 8K - 15K
+                      From KES 8K
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">Perfect for startups & personal brands</p>
+                  <p className="text-sm text-muted-foreground">For businesses that need a focused online presence</p>
                 </CardHeader>
                 <CardContent className="pt-2">
                   <ul className="space-y-2 mb-6">
@@ -1419,7 +1439,7 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <Button
-                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in the *Landing Page Package (KES 8-15K)*.\n\nCan we discuss my project requirements?")}`, "_blank")}
+                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in the *Business Starter Package*.\n\nCan we discuss my project requirements?")}`, "_blank")}
                     className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -1428,7 +1448,7 @@ export default function HomePage() {
                     WhatsApp Us
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
-                    Prefer email? <button onClick={() => openEmailModal("Landing Page Package (KES 8-15K)", "Package: Landing Page\n• Single page design\n• Mobile responsive\n• Contact form\n• Social media links")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
+                    Prefer email? <button onClick={() => openEmailModal("Business Starter Package", "Package: Business Starter\n• Focused business page\n• Mobile responsive\n• WhatsApp or contact option\n• Social media integration")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
                   </p>
                 </CardContent>
               </Card>
@@ -1447,13 +1467,13 @@ export default function HomePage() {
                   <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">Best Value</Badge>
                 </div>
                 <CardHeader className="text-center pt-8">
-                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Small Business</h3>
+                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Business Growth</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
-                      KES 25K - 50K
+                      From KES 25K
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">Ideal for growing businesses</p>
+                  <p className="text-sm text-muted-foreground">For businesses that need a stronger website and clearer customer journey</p>
                 </CardHeader>
                 <CardContent className="pt-2">
                   <ul className="space-y-2 mb-6">
@@ -1465,7 +1485,7 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <Button
-                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in the *Small Business Package (KES 25-50K)*.\n\nCan we discuss my project requirements?")}`, "_blank")}
+                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in the *Business Growth Package*.\n\nCan we discuss my project requirements?")}`, "_blank")}
                     className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -1474,7 +1494,7 @@ export default function HomePage() {
                     WhatsApp Us
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
-                    Prefer email? <button onClick={() => openEmailModal("Small Business Package (KES 25-50K)", "Package: Small Business Website\n• Up to 5-7 pages\n• Custom responsive design\n• SEO optimization\n• Email integration\n• Social media integration\n• Google Analytics setup")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
+                    Prefer email? <button onClick={() => openEmailModal("Business Growth Package", "Package: Business Growth\n• Multi-page business website\n• Custom responsive design\n• Basic SEO setup\n• Contact & email integration\n• Social media integration\n• Analytics setup")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
                   </p>
                 </CardContent>
               </Card>
@@ -1490,20 +1510,20 @@ export default function HomePage() {
             >
               <Card className="bg-card border-2 border-purple-300 dark:border-purple-600 relative h-full">
                 <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">Enterprise</Badge>
+                  <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">Custom</Badge>
                 </div>
                 <CardHeader className="text-center pt-8">
-                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Custom Solutions</h3>
+                  <h3 className="text-2xl font-bold text-foreground mb-2 font-heading">Custom Digital Product</h3>
                   <div className="mb-4">
                     <span className="text-4xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
                       Let&apos;s Talk
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground">Tailored for your unique needs</p>
+                  <p className="text-sm text-muted-foreground">For more complex digital requirements</p>
                 </CardHeader>
                 <CardContent className="pt-2">
                   <ul className="space-y-2 mb-6">
-                    {["E-commerce platforms", "Web applications", "Payment integration", "Ongoing support"].map((item, i) => (
+                    {["Web applications & dashboards", "Booking or reservation systems", "Payment & API integrations", "Ongoing support"].map((item, i) => (
                       <li key={i} className="flex items-center text-sm">
                         <Check className="h-4 w-4 text-purple-500 mr-2 flex-shrink-0" />
                         {item}
@@ -1511,7 +1531,7 @@ export default function HomePage() {
                     ))}
                   </ul>
                   <Button
-                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in *Custom Solutions* for my project.\n\nI need help with complex features like e-commerce, web applications, or payment integration.\n\nCan we schedule a consultation?")}`, "_blank")}
+                    onClick={() => window.open(`https://wa.me/254115588218?text=${encodeURIComponent("Hi Xelerated Tech! 👋\n\nI'm interested in a *Custom Digital Product* for my project.\n\nI need help with a web application, dashboard, booking system, integration, or another custom requirement.\n\nCan we schedule a consultation?")}`, "_blank")}
                     className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white cursor-pointer flex items-center justify-center gap-2"
                   >
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -1520,7 +1540,7 @@ export default function HomePage() {
                     WhatsApp Us
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
-                    Prefer email? <button onClick={() => openEmailModal("Custom Solutions Package", "Package: Custom Solutions\n• E-commerce platforms\n• Web applications\n• Payment integration (M-Pesa/Card)\n• User authentication\n• Database integration\n• Ongoing support & maintenance\n\nLet's discuss your specific requirements and build a custom solution tailored to your business needs.")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
+                    Prefer email? <button onClick={() => openEmailModal("Custom Digital Product", "Package: Custom Digital Product\n• Web applications & dashboards\n• Booking or reservation systems\n• Payment & API integrations\n• User authentication\n• Database integration\n• Ongoing support & maintenance\n\nLet's discuss your specific requirements and build a practical solution tailored to your business needs.")} className="text-orange-500 hover:underline cursor-pointer">Quick form</button>
                   </p>
                 </CardContent>
               </Card>
@@ -1535,7 +1555,7 @@ export default function HomePage() {
             viewport={{ once: false, amount: 0.3 }}
             className="text-center my-12"
           >
-            <p className="text-lg text-muted-foreground mb-2">Or build your custom package below</p>
+            <p className="text-lg text-muted-foreground mb-2">Or build a package around the features you actually need</p>
             <ChevronDown className="h-6 w-6 mx-auto text-orange-500 animate-bounce" />
           </motion.div>
 
@@ -1550,15 +1570,15 @@ export default function HomePage() {
             <Card className="bg-card border-border shadow-xl">
               <CardHeader className="text-center pb-6">
                 <h3 className="text-3xl font-bold text-foreground mb-2 font-heading">
-                  Build Your Package
+                  Build Your Digital Package
                 </h3>
-                <p className="text-muted-foreground">Customize your website to fit your budget and needs</p>
+                <p className="text-muted-foreground">Choose the features and support your business actually needs</p>
               </CardHeader>
               <CardContent className="px-6 pb-8">
                 {/* Budget Slider */}
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-4">
-                    <label className="text-sm font-medium text-foreground">Drag to explore packages:</label>
+                    <label className="text-sm font-medium text-foreground">Explore what your project could include:</label>
                     <span className="text-2xl font-bold text-transparent bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text">
                       KES {calculateTotalPrice().toLocaleString()}
                     </span>
@@ -1943,7 +1963,7 @@ export default function HomePage() {
                 {/* Bottom Note */}
                 <div className="mt-8 text-center text-sm text-muted-foreground">
                   <p className="mb-2">
-                    All prices are estimates. Final pricing depends on specific requirements and complexity.
+                    All prices are starting estimates. Final pricing depends on your requirements, complexity and the work involved.
                   </p>
                   <p className="font-medium">
                     💳 Flexible payment: 40% deposit • 60% on completion • M-Pesa accepted
@@ -1975,8 +1995,7 @@ export default function HomePage() {
               </span>
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Discover how we've helped businesses across various industries achieve their digital transformation goals
-              with innovative solutions.
+              See examples of websites, interfaces and digital projects we have worked on across different industries.
             </p>
           </motion.div>
 
@@ -2218,7 +2237,7 @@ export default function HomePage() {
               </span>
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Get answers to common questions about our services and process
+              Learn how we approach websites, improvements, maintenance and custom digital products
             </p>
           </motion.div>
 
@@ -2258,8 +2277,7 @@ export default function HomePage() {
               </span>
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-              Let's discuss your project and bring your vision to life. We're here to help you succeed in the digital
-              world.
+              Tell us what you are trying to achieve, what is currently not working, or what you want to build. We can help you identify a practical next step.
             </p>
           </motion.div>
 
@@ -2282,6 +2300,16 @@ export default function HomePage() {
                 </CardHeader>
                 <CardContent className="space-y-6 p-6 pt-0">
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    <input
+                      type="text"
+                      name="website"
+                      value={formData.website}
+                      onChange={(e) => handleInputChange("website", e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="hidden"
+                    />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <input
@@ -2503,11 +2531,11 @@ export default function HomePage() {
                 </h4>
                 <ul className="space-y-3">
                   {[
-                    "Expert team with 5+ years of experience",
-                    "Cutting-edge technology solutions",
-                    "24/7 support and maintenance",
-                    "Proven track record of success",
-                    "Competitive pricing and flexible packages",
+                    "Practical solutions built around your actual business needs",
+                    "Modern, maintainable technologies and responsive interfaces",
+                    "Website support, troubleshooting and maintenance options",
+                    "Clear communication from planning through delivery",
+                    "Flexible starting points for different project sizes",
                   ].map((item, index) => (
                     <li key={index} className="flex items-center text-gray-600 dark:text-gray-400">
                       <Check className="h-5 w-5 text-orange-500 mr-3 flex-shrink-0" />
@@ -2541,7 +2569,7 @@ export default function HomePage() {
                 </div>
               </div>
               <p className="text-gray-400 text-sm leading-relaxed">
-                Transforming businesses through innovative technology solutions and digital excellence.
+                Helping businesses build, improve and maintain practical digital solutions that support their day-to-day goals.
               </p>
             </div>
 
@@ -2564,12 +2592,12 @@ export default function HomePage() {
             <div>
               <h4 className="text-white font-semibold mb-4 text-base font-heading">Services</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>Web Development</li>
-                <li>Mobile Applications</li>
-                <li>Digital Strategy</li>
-                <li>Cloud Solutions</li>
-                <li>UI/UX Design</li>
-                <li>Technology Consulting</li>
+                <li>Digital Presence</li>
+                <li>Website Rescue & Maintenance</li>
+                <li>Digital Products</li>
+                <li>Frontend & UI/UX</li>
+                <li>Technical Support</li>
+                <li>Digital Consulting</li>
               </ul>
             </div>
 

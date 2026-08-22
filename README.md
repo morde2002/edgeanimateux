@@ -231,6 +231,10 @@ EMAILJS_SERVICE_ID=your_service_id
 EMAILJS_TEMPLATE_ID=your_template_id
 EMAILJS_PUBLIC_KEY=your_public_key
 
+# CallMeBot WhatsApp contact-form notifications
+CALLMEBOT_API_KEY=your_callmebot_api_key
+CALLMEBOT_PHONE=+254115588218
+
 # Analytics (Optional)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX
